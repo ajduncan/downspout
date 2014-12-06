@@ -1,0 +1,8 @@
+Pafy==0.3.66
+autopep8==1.0.4
+fudge==1.0.3
+pep8==1.5.7
+pytaglib==0.4.1
+requests==2.5.0
+simplejson==3.6.5
+slimit==0.8.1
