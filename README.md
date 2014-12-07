@@ -15,7 +15,18 @@ Where fair use meets fu.  Capture cloud based media for offline merriment.
 
 ## Running ##
 
+	Add some lines to media.txt in the format:
+	
+	service,artist
+
+	Where service may be soundcloud, bandcamp, youtube or vimeo.
+
 	$ (.env) python ds.py
+
+## Disclaimer ##
+
+	Use at your own risk and according to the terms of service for these services.
+	This is only a proof of concept.
 
 ## Todo ##
 
