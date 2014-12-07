@@ -37,7 +37,8 @@ tree = lambda: defaultdict(tree)
 
 def safe_filename(filename):
     filename.replace(' ', '_')
-    valid_characters = "-_.(){0}{1}".format(string.ascii_letters, string.digits)
+    valid_characters = "-_.(){0}{1}".format(string.ascii_letters,
+                                            string.digits)
     safe_name = ''.join(c for c in filename if c in valid_characters)
     return safe_name
 
@@ -46,7 +47,8 @@ def safe_filename(filename):
 # http://stackoverflow.com/questions/20801034/how-to-measure-download-speed-and-progress-using-requests
 def get_file(track_folder, safe_track, artist, title, url):
     short_url = (url[:50] + ' ...') if len(url) > 50 else url
-    print("Saving {0} from {1} to {2}".format(safe_track, short_url, track_folder))
+    print("Saving {0} from {1} to {2}".format(
+        safe_track, short_url, track_folder))
 
     try:
         os.makedirs(track_folder, exist_ok=True)
@@ -57,14 +59,15 @@ def get_file(track_folder, safe_track, artist, title, url):
                 r = requests.get(url, stream=True)
                 total_length = r.headers.get('content-length')
                 dl = 0
-                if total_length is None: # no content length header
+                if total_length is None:  # no content length header
                     f.write(r.content)
                 else:
                     for chunk in r.iter_content(1024):
                         dl += len(chunk)
                         f.write(chunk)
                         done = int(50 * dl / int(total_length))
-                        sys.stdout.write("\r[{0}{1}] {2} bps".format('.' * done, ' ' * (50-done), dl//(time.clock() - start)))
+                        sys.stdout.write("\r[{0}{1}] {2} bps".format(
+                            '.' * done, ' ' * (50 - done), dl // (time.clock() - start)))
                     print('')
             elapsed = time.clock() - start
             tagfile(filename, artist, track['title'])
@@ -82,14 +85,15 @@ def get_file(track_folder, safe_track, artist, title, url):
 def tagfile(filename, artist, title):
     try:
         f = taglib.File(filename)
-        f.tags["ARTIST"] = [artist] 
-        f.tags["TITLE"] = [title] 
+        f.tags["ARTIST"] = [artist]
+        f.tags["TITLE"] = [title]
         f.save()
     except:
         print("Error tagging file: {}".format(sys.exc_info()[0]))
 
 
-# solution cheerfully obtained from https://github.com/iheanyi/bandcamp-dl/blob/master/bandcamp-dl/Bandcamp.py#L69
+# solution cheerfully obtained from
+# https://github.com/iheanyi/bandcamp-dl/blob/master/bandcamp-dl/Bandcamp.py#L69
 def bandcamp_get_album_block(response):
     block = response.text.split('var TralbumData = ')
     block = block[1]
@@ -123,7 +127,7 @@ def bandcamp_get_track_data(track):
 
 
 # fetch all artist media by album at url,
-# which has the format http://<artist>.bandcamp.com/ 
+# which has the format http://<artist>.bandcamp.com/
 def bandcamp_fetch_media(artist):
     url = BANDCAMP_FRONT_URL.format(artist)
     media = tree()
@@ -139,10 +143,12 @@ def bandcamp_fetch_media(artist):
 
         album_title = embed_block['EmbedData']['album_title']
         media[artist][album_title]['tracks'] = []
-        media[artist][album_title]['date'] = album_block['TralbumData']['album_release_date'].split()[2]
+        media[artist][album_title]['date'] = album_block[
+            'TralbumData']['album_release_date'].split()[2]
 
         for track in album_block['TralbumData']['trackinfo']:
-            media[artist][album_title]['tracks'].append(bandcamp_get_track_data(track))
+            media[artist][album_title]['tracks'].append(
+                bandcamp_get_track_data(track))
 
     safe_user = safe_filename(artist)
     for index in media:
@@ -150,10 +156,14 @@ def bandcamp_fetch_media(artist):
             safe_album = safe_filename(album)
 
             for track in media[index][album]['tracks']:
-                safe_track = '' + track['track'] + '-' + safe_filename(track['title']) + '.mp3'
-                track_folder = "{0}/{1}/{2}".format(MEDIA_FOLDER, safe_user, safe_album)
+                safe_track = '' + \
+                    track['track'] + '-' + \
+                    safe_filename(track['title']) + '.mp3'
+                track_folder = "{0}/{1}/{2}".format(
+                    MEDIA_FOLDER, safe_user, safe_album)
                 try:
-                    get_file(track_folder, safe_track, artist, track['title'], track['url'])
+                    get_file(
+                        track_folder, safe_track, artist, track['title'], track['url'])
                 except:
                     pass
                 print('')
@@ -161,7 +171,7 @@ def bandcamp_fetch_media(artist):
     print('')
 
 
-# fetch all artist media at url, which has 
+# fetch all artist media at url, which has
 # the format https://soundcloud.com/username
 def soundcloud_fetch_media(url):
     api = SOUNDCLOUD_RESOLVE_API.format(url, SOUNDCLOUD_CLIENT_ID)
@@ -183,7 +193,8 @@ def soundcloud_fetch_media(url):
             regex = re.compile("\/([a-zA-Z0-9]+)_")
             r = regex.search(waveform_url)
             stream_id = r.groups()[0]
-            media[user_id][track['title']] = SOUNDCLOUD_MEDIA_URL.format(stream_id)
+            media[user_id][
+                track['title']] = SOUNDCLOUD_MEDIA_URL.format(stream_id)
         except:
             pass
 
@@ -193,7 +204,8 @@ def soundcloud_fetch_media(url):
         track_folder = "{0}/{1}".format(MEDIA_FOLDER, safe_user)
 
         try:
-            get_file(track_folder, safe_track, user, track, media[user_id][track])
+            get_file(
+                track_folder, safe_track, user, track, media[user_id][track])
         except:
             pass
         print('')
@@ -210,10 +222,12 @@ def youtube_fetch_media(artist):
     for link in videos:
         video = pafy.new(YOUTUBE_VIDEO_URL.format(link))
         audiostream = video.getbestaudio()
-        safe_track = '' + safe_filename(audiostream.title) + '.' + audiostream.extension
+        safe_track = '' + \
+            safe_filename(audiostream.title) + '.' + audiostream.extension
         track_folder = "{0}/{1}".format(MEDIA_FOLDER, safe_user)
         try:
-            get_file(track_folder, safe_track, artist, video.title, audiostream.url)
+            get_file(
+                track_folder, safe_track, artist, video.title, audiostream.url)
         except:
             pass
 
@@ -232,7 +246,8 @@ def vimeo_fetch_media(artist):
         title = node.find('title').text
         link = node.find('link').text
         link_response = requests.get(link)
-        data_config_url = re.findall(r'data-config-url=[\'"]?([^\'" >]+)', link_response.text)
+        data_config_url = re.findall(
+            r'data-config-url=[\'"]?([^\'" >]+)', link_response.text)
         data_config_url = data_config_url[0].replace('&amp;', '&')
         link_response = requests.get(data_config_url)
         link_json = json.loads(link_response.text)
@@ -262,12 +277,13 @@ def fetch_all(filename):
     for media in records:
         [app, artist] = [item.strip() for item in media.split(',')]
         if app.lower() == 'soundcloud':
-            soundcloud_fetch_media('{0}/{1}'.format(SOUNDCLOUD_FRONT_URL, artist))
+            soundcloud_fetch_media(
+                '{0}/{1}'.format(SOUNDCLOUD_FRONT_URL, artist))
         if app.lower() == 'bandcamp':
             bandcamp_fetch_media(artist)
         if app.lower() == 'youtube':
             youtube_fetch_media(artist)
-        if app.lower() == 'vimeo': 
+        if app.lower() == 'vimeo':
             vimeo_fetch_media(artist)
 
 
