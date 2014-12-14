@@ -23,6 +23,10 @@ Where fair use meets fu.  Capture cloud based media for offline merriment.
 
 	$ (.env) python ds.py
 
+## Testing ##
+
+	$ (.env) ./runtests.sh
+
 ## Disclaimer ##
 
 	Use at your own risk and according to the terms of service for these services.
