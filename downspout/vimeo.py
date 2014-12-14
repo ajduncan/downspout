@@ -8,12 +8,12 @@ from xml.etree import ElementTree
 
 import requests
 
-from downspout.settings import *
+from downspout import settings
 from downspout.utils import get_file, safe_filename
 
 
 def vimeo_fetch_media(artist):
-    video_url = VIMEO_USER_URL.format(artist)
+    video_url = settings.VIMEO_USER_URL.format(artist)
     vimeo_response = requests.get(video_url)
     xml = ElementTree.fromstring(vimeo_response.text)
     safe_user = safe_filename(artist)
@@ -41,7 +41,7 @@ def vimeo_fetch_media(artist):
             pass
         url = hd_url if hd_url else sd_url
         safe_track = '' + safe_filename(title) + '.flv'
-        track_folder = "{0}/{1}".format(MEDIA_FOLDER, safe_user)
+        track_folder = "{0}/{1}".format(settings.MEDIA_FOLDER, safe_user)
         try:
             get_file(track_folder, safe_track, artist, title, url)
         except:

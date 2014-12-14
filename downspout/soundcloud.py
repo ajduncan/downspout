@@ -8,7 +8,7 @@ import re
 
 import requests
 
-from downspout.settings import *
+from downspout import settings
 from downspout.utils import get_file, safe_filename
 
 tree = lambda: defaultdict(tree)
@@ -16,8 +16,9 @@ tree = lambda: defaultdict(tree)
 
 # fetch all artist media at url, which has
 # the format https://soundcloud.com/username
-def soundcloud_fetch_media(url):
-    api = SOUNDCLOUD_RESOLVE_API.format(url, SOUNDCLOUD_CLIENT_ID)
+def soundcloud_fetch_media(artist):
+    url = '{0}/{1}'.format(settings.SOUNDCLOUD_FRONT_URL, artist)
+    api = settings.SOUNDCLOUD_RESOLVE_API.format(url, settings.SOUNDCLOUD_CLIENT_ID)
     media = tree()
 
     resolver = requests.get(api)
@@ -25,7 +26,7 @@ def soundcloud_fetch_media(url):
         user = resolver.json()['username']
         user_id = resolver.json()['id']
         track_count = int(resolver.json()['track_count'])
-        track_api = SOUNDCLOUD_TRACK_API.format(user_id, SOUNDCLOUD_CLIENT_ID)
+        track_api = settings.SOUNDCLOUD_TRACK_API.format(user_id, settings.SOUNDCLOUD_CLIENT_ID)
         tracks = requests.get(track_api).json()
     except:
         pass
@@ -37,14 +38,14 @@ def soundcloud_fetch_media(url):
             r = regex.search(waveform_url)
             stream_id = r.groups()[0]
             media[user_id][
-                track['title']] = SOUNDCLOUD_MEDIA_URL.format(stream_id)
+                track['title']] = settings.SOUNDCLOUD_MEDIA_URL.format(stream_id)
         except:
             pass
 
     safe_user = safe_filename(user)
     for track in media[user_id].keys():
         safe_track = '' + safe_filename(track) + '.mp3'
-        track_folder = "{0}/{1}".format(MEDIA_FOLDER, safe_user)
+        track_folder = "{0}/{1}".format(settings.MEDIA_FOLDER, safe_user)
 
         try:
             get_file(
