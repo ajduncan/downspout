@@ -2,6 +2,8 @@
 
 Where fair use meets fu.  Capture cloud based media for offline merriment.
 
+[![Build Status](https://travis-ci.org/ajduncan/downspout.svg?branch=master)](https://travis-ci.org/ajduncan/downspout)
+
 ## Installing ##
 
     You need taglib to use ID3 tagging with pytaglib.  See:
