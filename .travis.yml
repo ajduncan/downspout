@@ -1,0 +1,14 @@
+language: python
+python:
+  - "3.3"
+  - "3.4"
+install: pip install -r rquirements.txt --use-mirrors
+script:  python -m downspout.test.runtests
+notifications:
+  irc: "irc.freenode.org#downspout"
+  template:
+    - "%{repository}@%{branch}: %{message} (%{build_url})"
+  on_success: change
+  on_failure: change
+  email:
+    - ajduncan@gmail.com
