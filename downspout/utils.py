@@ -12,7 +12,7 @@ import taglib
 
 
 def safe_filename(filename):
-    filename.replace(' ', '_')
+    filename = filename.replace(' ', '_')
     valid_characters = "-_.(){0}{1}".format(string.ascii_letters,
                                             string.digits)
     safe_name = ''.join(c for c in filename if c in valid_characters)
