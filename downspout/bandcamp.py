@@ -5,9 +5,10 @@
 from collections import defaultdict
 import re
 
+import jsobj
 import requests
 
-from downspout.settings import *
+from downspout import settings
 from downspout.utils import get_file, safe_filename
 
 tree = lambda: defaultdict(tree)
@@ -50,14 +51,14 @@ def bandcamp_get_track_data(track):
 # fetch all artist media by album at url,
 # which has the format http://<artist>.bandcamp.com/
 def bandcamp_fetch_media(artist):
-    url = BANDCAMP_FRONT_URL.format(artist)
+    url = settings.BANDCAMP_FRONT_URL.format(artist)
     media = tree()
     safe_user = safe_filename(artist)
     bandcrap = requests.get(url)
 
     albums = re.findall(r'href=[\'"]?\/album\/{1}([^\'" >]+)', bandcrap.text)
     for album in albums:
-        album_url = BANDCAMP_ALBUM_URL.format(artist, album)
+        album_url = settings.BANDCAMP_ALBUM_URL.format(artist, album)
         bandcamp_album_response = requests.get(album_url)
         album_block = bandcamp_get_album_block(bandcamp_album_response)
         embed_block = bandcamp_get_embed_block(bandcamp_album_response)
@@ -81,7 +82,7 @@ def bandcamp_fetch_media(artist):
                     track['track'] + '-' + \
                     safe_filename(track['title']) + '.mp3'
                 track_folder = "{0}/{1}/{2}".format(
-                    MEDIA_FOLDER, safe_user, safe_album)
+                    settings.MEDIA_FOLDER, safe_user, safe_album)
                 try:
                     get_file(
                         track_folder, safe_track, artist, track['title'], track['url'])
