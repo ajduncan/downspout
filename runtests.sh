@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python -m downspout.test.runtests
+python -m tests.runtests

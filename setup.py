@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
-requires = [
+install_requires = [
 	'Pafy==0.3.66',
 	'fudge==1.0.3',
 	'pytaglib==0.4.1',
@@ -19,5 +19,6 @@ setup(name='downspout',
       author='Andy Duncan',
       author_email='ajduncan@gmail.com',
       url='https://github.com/ajduncan/downspout/',
-      install_requires=requires,
+      install_requires=install_requires,
+      test_suite='tests.runtests'
      )
