@@ -13,7 +13,7 @@ requires = [
 
 
 setup(name='downspout',
-      version='0.0.1',
+      version='v0.0.1',
       description='Capture cloud based media for offline merriment.',
       license='MIT',
       author='Andy Duncan',
