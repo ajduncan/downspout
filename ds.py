@@ -2,7 +2,13 @@
 
 import os
 
-from downspout import bandcamp, settings, soundcloud, youtube, vimeo
+from downspout import (
+    bandcamp,
+    settings,
+    soundcloud,
+    vimeo,
+    youtube,
+)
 
 # Set the location to your media folder if desired.  The default will save to ./media.
 # settings.MEDIA_FOLDER = './downloads'
