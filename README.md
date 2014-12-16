@@ -33,10 +33,3 @@ Where fair use meets fu.  Capture cloud based media for offline merriment.
 
 	Use at your own risk and according to the terms of service for these services.
 	This is only a proof of concept.
-
-## Todo ##
-
-	1.  Documentation based testing with doctest.
-	2.  flasketize, consider sqlite, stuff config and library metadata in db etc.
-	3.  front end to add more artists and API, configure settings
-	4.  flask-sockets to share streams
