@@ -2,7 +2,7 @@
 
 import os
 
-from downspout import settings, utils
+from downspout import settings, utils, services
 
 # Set the location to your media folder if desired.  The default will save to ./media.
 # settings.MEDIA_FOLDER = './downloads'
@@ -19,4 +19,5 @@ def fetch_all(filename):
 
 
 if __name__ == "__main__":
+    print("Running with available services: {}".format(services))
     fetch_all('media.txt')
