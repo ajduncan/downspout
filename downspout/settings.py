@@ -15,4 +15,3 @@ VIMEO_USER_URL = "http://vimeo.com/{0}/videos/rss"
 
 YOUTUBE_USER_URL = "https://www.youtube.com/user/{0}"
 YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v={0}"
-

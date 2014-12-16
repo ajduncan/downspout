@@ -2,16 +2,13 @@
 
 """This module contains code to work with bandcamp."""
 
-from collections import defaultdict
 import re
 
 import jsobj
 import requests
 
-from downspout import settings
+from downspout import settings, utils
 from downspout.utils import get_file, safe_filename
-
-tree = lambda: defaultdict(tree)
 
 
 # solution cheerfully obtained from
@@ -48,12 +45,13 @@ def bandcamp_get_track_data(track):
     return new_track
 
 
-# fetch all artist media by album at url,
+# fetch all artist metadata by album at url,
 # which has the format http://<artist>.bandcamp.com/
-def bandcamp_fetch_media(artist):
+def bandcamp_fetch_metadata(artist):
     url = settings.BANDCAMP_FRONT_URL.format(artist)
-    media = tree()
-    safe_user = safe_filename(artist)
+    media = utils.tree()
+    metadata = utils.tree()
+    metadata[artist]['services']['bandcamp'] = url
     bandcrap = requests.get(url)
 
     albums = re.findall(r'href=[\'"]?\/album\/{1}([^\'" >]+)', bandcrap.text)
@@ -72,22 +70,14 @@ def bandcamp_fetch_media(artist):
             media[artist][album_title]['tracks'].append(
                 bandcamp_get_track_data(track))
 
-    safe_user = safe_filename(artist)
     for index in media:
         for album in media[index]:
-            safe_album = safe_filename(album)
-
             for track in media[index][album]['tracks']:
-                safe_track = '' + \
-                    track['track'] + '-' + \
-                    safe_filename(track['title']) + '.mp3'
-                track_folder = "{0}/{1}/{2}".format(
-                    settings.MEDIA_FOLDER, safe_user, safe_album)
-                try:
-                    get_file(
-                        track_folder, safe_track, artist, track['title'], track['url'])
-                except:
-                    pass
-                print('')
+                metadata[artist]['tracks'][track['title']]['url'] = track['url']
+                metadata[artist]['tracks'][track['title']]['album'] = album
+                metadata[artist]['tracks'][track['title']]['encoding'] = 'mp3'
+                metadata[artist]['tracks'][track['title']]['duration'] = track['duration']
+                metadata[artist]['tracks'][track['title']]['track_number'] = track['track_num'] if 'track_num' in track else -1
+                metadata[artist]['tracks'][track['title']]['license'] = 'unknown'
 
-    print('')
+    return metadata

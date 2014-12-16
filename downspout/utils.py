@@ -2,6 +2,9 @@
 
 """Utilities for downloading, saving and tagging files from the cloud."""
 
+from collections import defaultdict
+import importlib
+import json
 import os
 import sys
 import string
@@ -9,6 +12,10 @@ import time
 
 import requests
 import taglib
+
+from downspout import settings
+
+tree = lambda: defaultdict(tree)
 
 
 def safe_filename(filename):
@@ -22,14 +29,14 @@ def safe_filename(filename):
 # cleaned up
 # http://stackoverflow.com/questions/20801034/how-to-measure-download-speed-and-progress-using-requests
 def get_file(track_folder, safe_track, artist, title, url):
-    short_url = (url[:50] + ' ...') if len(url) > 50 else url
-    print("Saving {0} from {1} to {2}".format(
-        safe_track, short_url, track_folder))
-
     try:
         os.makedirs(track_folder, exist_ok=True)
         filename = "{0}/{1}".format(track_folder, safe_track)
         if not os.path.isfile(filename):
+            short_url = (url[:50] + ' ...') if len(url) > 50 else url
+            print("Saving {0} from {1} to {2}".format(
+                safe_track, short_url, track_folder))
+
             with open(filename, 'wb') as f:
                 start = time.clock()
                 r = requests.get(url, stream=True)
@@ -66,3 +73,45 @@ def tagfile(filename, artist, title):
         f.save()
     except:
         print("Error tagging file: {}".format(sys.exc_info()[0]))
+
+
+def download_from_metadata(metadata, artist, service):
+    safe_artist = safe_filename(artist)
+
+    for track_title in metadata[artist]['tracks']:
+        track_url = metadata[artist]['tracks'][track_title]['url']
+        track_album = metadata[artist]['tracks'][track_title]['album']
+        track_extension = metadata[artist]['tracks'][track_title]['encoding']
+        track_number = metadata[artist]['tracks'][track_title]['track_number']
+        track_number = str(track_number) + '-' if track_number != -1 else ''
+        safe_album = safe_filename(track_album)
+        safe_track = safe_filename(track_title) + '.' + track_extension
+        safe_track = track_number + safe_track
+        track_folder = "{0}/{1}/{2}".format(
+            settings.MEDIA_FOLDER, safe_artist, safe_album)
+
+        try:
+            get_file(
+                track_folder, safe_track, artist, track_title, track_url)
+        except:
+            pass
+        print('')
+
+    print('')
+
+
+# print/dump metadata
+def dump_metadata(metadata):
+    print(json.dumps(metadata, sort_keys=True, indent=4))
+
+
+# provided artist and service, return metadata about the artists tracks, albums, etc.
+def metadata_by_artist(service, artist):
+    try:
+        module = importlib.import_module('downspout.' + service)
+    except ImportError:
+        print("Service unknown: '{}'".format(service))
+        return None
+
+    fetch_metadata = getattr(module, service + '_fetch_metadata', lambda: None)
+    return fetch_metadata(artist)

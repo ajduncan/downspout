@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""This module contains code to work with soundcloud."""
+"""This module contains code to work with vimeo."""
 
 import json
 import re
@@ -8,16 +8,18 @@ from xml.etree import ElementTree
 
 import requests
 
-from downspout import settings
-from downspout.utils import get_file, safe_filename
+from downspout import settings, utils
 
 
-def vimeo_fetch_media(artist):
+def vimeo_fetch_metadata(artist):
     video_url = settings.VIMEO_USER_URL.format(artist)
     vimeo_response = requests.get(video_url)
     xml = ElementTree.fromstring(vimeo_response.text)
-    safe_user = safe_filename(artist)
+    metadata = utils.tree()
+
+    track_number = 0
     for node in xml.findall('./channel/item'):
+        track_number = track_number + 1
         hd_url = None
         sd_url = None
 
@@ -40,11 +42,12 @@ def vimeo_fetch_media(artist):
         except:
             pass
         url = hd_url if hd_url else sd_url
-        safe_track = '' + safe_filename(title) + '.flv'
-        track_folder = "{0}/{1}".format(settings.MEDIA_FOLDER, safe_user)
-        try:
-            get_file(track_folder, safe_track, artist, title, url)
-        except:
-            pass
 
-    print('')
+        metadata[artist]['tracks'][title]['url'] = url
+        metadata[artist]['tracks'][title]['album'] = ''
+        metadata[artist]['tracks'][title]['encoding'] = 'flv'
+        metadata[artist]['tracks'][title]['duration'] = None
+        metadata[artist]['tracks'][title]['track_number'] = track_number
+        metadata[artist]['tracks'][title]['license'] = 'unknown'
+
+    return metadata

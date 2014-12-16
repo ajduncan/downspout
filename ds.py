@@ -2,13 +2,7 @@
 
 import os
 
-from downspout import (
-    bandcamp,
-    settings,
-    soundcloud,
-    vimeo,
-    youtube,
-)
+from downspout import settings, utils
 
 # Set the location to your media folder if desired.  The default will save to ./media.
 # settings.MEDIA_FOLDER = './downloads'
@@ -17,15 +11,11 @@ from downspout import (
 def fetch_all(filename):
     records = open(filename, 'r')
     for media in records:
-        [app, artist] = [item.strip() for item in media.split(',')]
-        if app.lower() == 'soundcloud':
-            soundcloud.soundcloud_fetch_media(artist)
-        if app.lower() == 'bandcamp':
-            bandcamp.bandcamp_fetch_media(artist)
-        if app.lower() == 'youtube':
-            youtube.youtube_fetch_media(artist)
-        if app.lower() == 'vimeo':
-            vimeo.vimeo_fetch_media(artist)
+        [service, artist] = [item.strip() for item in media.split(',')]
+        metadata = utils.metadata_by_artist(service, artist)
+        if metadata:
+            # utils.dump_metadata(metadata)
+            utils.download_from_metadata(metadata, artist, service)
 
 
 if __name__ == "__main__":

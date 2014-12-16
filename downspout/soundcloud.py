@@ -2,24 +2,20 @@
 
 """This module contains code to work with soundcloud."""
 
-from collections import defaultdict
 import json
 import re
 
 import requests
 
-from downspout import settings
-from downspout.utils import get_file, safe_filename
-
-tree = lambda: defaultdict(tree)
+from downspout import settings, utils
 
 
 # fetch all artist media at url, which has
 # the format https://soundcloud.com/username
-def soundcloud_fetch_media(artist):
+def soundcloud_fetch_metadata(artist):
     url = '{0}/{1}'.format(settings.SOUNDCLOUD_FRONT_URL, artist)
     api = settings.SOUNDCLOUD_RESOLVE_API.format(url, settings.SOUNDCLOUD_CLIENT_ID)
-    media = tree()
+    metadata = utils.tree()
 
     resolver = requests.get(api)
     try:
@@ -31,27 +27,23 @@ def soundcloud_fetch_media(artist):
     except:
         pass
 
+    track_number = 0
     for track in tracks:
+        track_number = track_number + 1
         try:
             waveform_url = track['waveform_url']
             regex = re.compile("\/([a-zA-Z0-9]+)_")
             r = regex.search(waveform_url)
             stream_id = r.groups()[0]
-            media[user_id][
-                track['title']] = settings.SOUNDCLOUD_MEDIA_URL.format(stream_id)
+
+            metadata[artist]['tracks'][track['title']]['url'] = settings.SOUNDCLOUD_MEDIA_URL.format(stream_id)
+            metadata[artist]['tracks'][track['title']]['album'] = ''
+            metadata[artist]['tracks'][track['title']]['encoding'] = 'mp3'
+            metadata[artist]['tracks'][track['title']]['duration'] = None
+            metadata[artist]['tracks'][track['title']]['track_number'] = track_number
+            metadata[artist]['tracks'][track['title']]['license'] = 'unknown'
+
         except:
             pass
 
-    safe_user = safe_filename(user)
-    for track in media[user_id].keys():
-        safe_track = '' + safe_filename(track) + '.mp3'
-        track_folder = "{0}/{1}".format(settings.MEDIA_FOLDER, safe_user)
-
-        try:
-            get_file(
-                track_folder, safe_track, user, track, media[user_id][track])
-        except:
-            pass
-        print('')
-
-    print('')
+    return metadata

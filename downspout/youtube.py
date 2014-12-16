@@ -7,26 +7,27 @@ import re
 import pafy
 import requests
 
-from downspout import settings
-from downspout.utils import get_file, safe_filename
+from downspout import settings, utils
 
 
 # fetch all of a user's uploaded videos ...
-def youtube_fetch_media(artist):
+def youtube_fetch_metadata(artist):
     video_url = settings.YOUTUBE_USER_URL.format(artist) + '/videos'
     yt_response = requests.get(video_url)
     videos = set(re.findall(r'href="\/watch\?v=([^&|"]+)', yt_response.text))
-    safe_user = safe_filename(artist)
+    metadata = utils.tree()
+
     for link in videos:
         video = pafy.new(settings.YOUTUBE_VIDEO_URL.format(link))
         audiostream = video.getbestaudio()
-        safe_track = '' + \
-            safe_filename(audiostream.title) + '.' + audiostream.extension
-        track_folder = "{0}/{1}".format(settings.MEDIA_FOLDER, safe_user)
-        try:
-            get_file(
-                track_folder, safe_track, artist, video.title, audiostream.url)
-        except:
-            pass
 
-    print('')
+        # note, artist here may not be author (video.author) ...
+        # also audiostream.title ?
+        metadata[artist]['tracks'][video.title]['url'] = audiostream.url
+        metadata[artist]['tracks'][video.title]['album'] = ''
+        metadata[artist]['tracks'][video.title]['encoding'] = audiostream.extension
+        metadata[artist]['tracks'][video.title]['duration'] = video.duration
+        metadata[artist]['tracks'][video.title]['track_number'] = -1
+        metadata[artist]['tracks'][video.title]['license'] = 'unknown'
+
+    return metadata
