@@ -122,7 +122,7 @@ def fetch(service, artist):
     metadata = metadata_by_artist(service, artist)
     if metadata:
         download_from_metadata(metadata, artist, service)
-        return True
+        return metadata
     else:
         return False
 
