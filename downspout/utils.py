@@ -115,3 +115,26 @@ def metadata_by_artist(service, artist):
 
     fetch_metadata = getattr(module, service + '_fetch_metadata', lambda: None)
     return fetch_metadata(artist)
+
+
+# fetch all media for artist from service
+def fetch(service, artist):
+    metadata = metadata_by_artist(service, artist)
+    if metadata:
+        download_from_metadata(metadata, artist, service)
+        return True
+    else:
+        return False
+
+
+# fetch everything from file
+def fetch_all(filename):
+    records = open(filename, 'r')
+    for media in records:
+        [service, artist] = [item.strip() for item in media.split(',')]
+        metadata = metadata_by_artist(service, artist)
+        if metadata:
+            # dump_metadata(metadata)
+            download_from_metadata(metadata, artist, service)
+
+    return True
