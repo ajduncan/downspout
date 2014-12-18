@@ -13,7 +13,7 @@ install_requires = [
 
 
 setup(name='downspout',
-      version='v0.0.1',
+      version='v0.0.4',
       description='Capture cloud based media for offline merriment.',
       license='MIT',
       author='Andy Duncan',
