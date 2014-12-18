@@ -28,14 +28,14 @@ def safe_filename(filename):
 
 # cleaned up
 # http://stackoverflow.com/questions/20801034/how-to-measure-download-speed-and-progress-using-requests
-def get_file(track_folder, safe_track, artist, title, url):
+def get_file(track_folder, track_filename, artist, title, url):
     try:
         os.makedirs(track_folder, exist_ok=True)
-        filename = "{0}/{1}".format(track_folder, safe_track)
+        filename = "{0}/{1}".format(track_folder, track_filename)
         if not os.path.isfile(filename):
             short_url = (url[:50] + ' ...') if len(url) > 50 else url
             print("Saving {0} from {1} to {2}".format(
-                safe_track, short_url, track_folder))
+                track_filename, short_url, track_folder))
 
             with open(filename, 'wb') as f:
                 start = time.clock()
@@ -53,7 +53,7 @@ def get_file(track_folder, safe_track, artist, title, url):
                             '.' * done, ' ' * (50 - done), dl // (time.clock() - start)))
                     print('')
             elapsed = time.clock() - start
-            tagfile(filename, artist, track['title'])
+            tagfile(filename, artist, title)
             print("Download completed in: {}".format(round(elapsed, 2)))
         else:
             print("Already downloaded: {}".format(filename))
@@ -83,16 +83,12 @@ def download_from_metadata(metadata, artist, service):
         track_album = metadata[artist]['tracks'][track_title]['album']
         track_extension = metadata[artist]['tracks'][track_title]['encoding']
         track_number = metadata[artist]['tracks'][track_title]['track_number']
-        track_number = str(track_number) + '-' if track_number != -1 else ''
-        safe_album = safe_filename(track_album)
-        safe_track = safe_filename(track_title) + '.' + track_extension
-        safe_track = track_number + safe_track
-        track_folder = "{0}/{1}/{2}".format(
-            settings.MEDIA_FOLDER, safe_artist, safe_album)
+        track_folder = metadata[artist]['tracks'][track_title]['track_folder']
+        track_filename = metadata[artist]['tracks'][track_title]['track_filename']
 
         try:
             get_file(
-                track_folder, safe_track, artist, track_title, track_url)
+                track_folder, track_filename, artist, track_title, track_url)
         except:
             pass
         print('')

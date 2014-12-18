@@ -49,6 +49,7 @@ def bandcamp_get_track_data(track):
 # which has the format http://<artist>.bandcamp.com/
 def bandcamp_fetch_metadata(artist):
     url = settings.BANDCAMP_FRONT_URL.format(artist)
+    safe_artist = utils.safe_filename(artist)
     media = utils.tree()
     metadata = utils.tree()
     metadata[artist]['services']['bandcamp'] = url
@@ -72,6 +73,7 @@ def bandcamp_fetch_metadata(artist):
 
     for index in media:
         for album in media[index]:
+            safe_album = utils.safe_filename(album)
             for track in media[index][album]['tracks']:
                 metadata[artist]['tracks'][track['title']]['url'] = track['url']
                 metadata[artist]['tracks'][track['title']]['album'] = album
@@ -79,5 +81,11 @@ def bandcamp_fetch_metadata(artist):
                 metadata[artist]['tracks'][track['title']]['duration'] = track['duration']
                 metadata[artist]['tracks'][track['title']]['track_number'] = track['track_num'] if 'track_num' in track else -1
                 metadata[artist]['tracks'][track['title']]['license'] = 'unknown'
+                track_filename = track['track_num'] + '-' if 'track_num' in track else ''
+                track_filename = track_filename + utils.safe_filename(track['title']) + '.mp3'
+                metadata[artist]['tracks'][track['title']]['track_filename'] = track_filename
+                track_folder = "{0}/{1}/{2}".format(
+                    settings.MEDIA_FOLDER, safe_artist, safe_album)
+                metadata[artist]['tracks'][track['title']]['track_folder'] = track_folder
 
     return metadata

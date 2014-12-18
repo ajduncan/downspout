@@ -13,6 +13,7 @@ from downspout import settings, utils
 
 def vimeo_fetch_metadata(artist):
     video_url = settings.VIMEO_USER_URL.format(artist)
+    safe_artist = utils.safe_filename(artist)
     vimeo_response = requests.get(video_url)
     xml = ElementTree.fromstring(vimeo_response.text)
     metadata = utils.tree()
@@ -49,5 +50,10 @@ def vimeo_fetch_metadata(artist):
         metadata[artist]['tracks'][title]['duration'] = None
         metadata[artist]['tracks'][title]['track_number'] = track_number
         metadata[artist]['tracks'][title]['license'] = 'unknown'
+        track_filename = str(track_number) + '-' + utils.safe_filename(title) + '.flv'
+        metadata[artist]['tracks'][title]['track_filename'] = track_filename
+        track_folder = "{0}/{1}".format(
+            settings.MEDIA_FOLDER, safe_artist)
+        metadata[artist]['tracks'][title]['track_folder'] = track_folder
 
     return metadata
