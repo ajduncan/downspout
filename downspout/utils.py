@@ -11,7 +11,7 @@ import string
 import time
 
 import requests
-import taglib
+import stagger
 
 from downspout import settings
 
@@ -67,10 +67,10 @@ def get_file(track_folder, track_filename, artist, title, url):
 # provided ID3 information, tag the file.
 def tagfile(filename, artist, title):
     try:
-        f = taglib.File(filename)
-        f.tags["ARTIST"] = [artist]
-        f.tags["TITLE"] = [title]
-        f.save()
+        tag = stagger.Tag24() # read_tag(filename)
+        tag.artist = artist
+        tag.title = title 
+        tag.write(filename)
     except:
         print("Error tagging file: {}".format(sys.exc_info()[0]))
 

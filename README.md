@@ -6,9 +6,6 @@ Where fair use meets fu.  Capture cloud based media for offline merriment.
 
 ## Installing ##
 
-    You need taglib to use ID3 tagging with pytaglib.  See:
-    https://github.com/taglib/taglib/blob/master/INSTALL
-
 	OSX/Linux:
 
 	$ virtualenv -p python3 .env
