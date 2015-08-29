@@ -11,6 +11,9 @@ from downspout import settings, utils, services
 def fetch_all(filename):
     records = open(filename, 'r')
     for media in records:
+        if media[0] == '#':
+            continue
+
         [service, artist] = [item.strip() for item in media.split(',')]
         metadata = utils.metadata_by_artist(service, artist)
         if metadata:
