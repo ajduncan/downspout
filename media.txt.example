@@ -1,0 +1,9 @@
+# Lines beginning with # will be ignored.
+# The line format is: <service>,<artist id>
+# for example:
+#
+# bandcamp,example
+# youtube,example
+# vimeo,example
+# bandcamp,example
+# soundgcloud,example
