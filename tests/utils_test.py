@@ -8,6 +8,7 @@ from downspout.utils import *
 class UtilsTest(unittest.TestCase):
 
     def setUp(self):
+        foo
         self.filename = "herp!@%$!%# derp.ext"
 
     def test_safe_filename(self):
