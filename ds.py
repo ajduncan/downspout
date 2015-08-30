@@ -22,6 +22,5 @@ def fetch_all(filename):
 
 
 if __name__ == "__main__":
-    foo
     print("Running with available services: {}".format(services))
     fetch_all('media.txt')
