@@ -6,6 +6,12 @@ python:
 install: pip install -r requirements.txt
 script:  python -m tests.runtests
 notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/d48f25595436f1f16a18
+    on_success: change
+    on_failure: always
+    on_start: never
   irc: "irc.freenode.org#downspout"
   template:
     - "%{repository}@%{branch}: %{message} (%{build_url})"
