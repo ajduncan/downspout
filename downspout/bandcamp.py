@@ -75,7 +75,7 @@ def bandcamp_fetch_metadata(artist):
         for album in media[index]:
             safe_album = utils.safe_filename(album)
             for track in media[index][album]['tracks']:
-                metadata[artist]['tracks'][track['title']]['url'] = track['url']
+                metadata[artist]['tracks'][track['title']]['url'] = 'http:' + track['url']
                 metadata[artist]['tracks'][track['title']]['album'] = album
                 metadata[artist]['tracks'][track['title']]['encoding'] = 'mp3'
                 metadata[artist]['tracks'][track['title']]['duration'] = track['duration']
