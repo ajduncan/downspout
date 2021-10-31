@@ -15,6 +15,7 @@ def fetch_all(filename):
             continue
 
         [service, artist] = [item.strip() for item in media.split(',')]
+        print("Got service: {0}, artist: {1}".format(service, artist))
         metadata = utils.metadata_by_artist(service, artist)
         if metadata:
             # utils.dump_metadata(metadata)

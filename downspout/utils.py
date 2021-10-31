@@ -69,7 +69,7 @@ def tagfile(filename, artist, title):
     try:
         tag = stagger.Tag24() # read_tag(filename)
         tag.artist = artist
-        tag.title = title 
+        tag.title = title
         tag.write(filename)
     except:
         print("Error tagging file: {}".format(sys.exc_info()[0]))

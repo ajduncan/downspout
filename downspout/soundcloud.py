@@ -19,12 +19,16 @@ def soundcloud_fetch_metadata(artist):
     metadata = utils.tree()
 
     resolver = requests.get(api)
+    print("Resolver: {}".format(resolver))
+
+    tracks = []
     try:
         user = resolver.json()['username']
         user_id = resolver.json()['id']
         track_count = int(resolver.json()['track_count'])
         track_api = settings.SOUNDCLOUD_TRACK_API.format(user_id, settings.SOUNDCLOUD_CLIENT_ID)
         tracks = requests.get(track_api).json()
+        print("Got tracks...{}".format(tracks))
     except:
         pass
 

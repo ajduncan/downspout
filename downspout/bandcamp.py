@@ -60,6 +60,8 @@ def bandcamp_fetch_metadata(artist):
         album_url = settings.BANDCAMP_ALBUM_URL.format(artist, album)
         bandcamp_album_response = requests.get(album_url)
         album_block = bandcamp_get_album_block(bandcamp_album_response)
+        print('Got album block: {}'.format(album_block))
+        urls_block = bandcamp_get_stream_urls(bandcamp_album_response)
         embed_block = bandcamp_get_embed_block(bandcamp_album_response)
 
         album_title = embed_block['EmbedData']['album_title']
@@ -70,11 +72,12 @@ def bandcamp_fetch_metadata(artist):
         for track in album_block['TralbumData']['trackinfo']:
             media[artist][album_title]['tracks'].append(
                 bandcamp_get_track_data(track))
-
+        exit
     for index in media:
         for album in media[index]:
             safe_album = utils.safe_filename(album)
             for track in media[index][album]['tracks']:
+                print('Got track: %s', track)
                 metadata[artist]['tracks'][track['title']]['url'] = track['url']
                 metadata[artist]['tracks'][track['title']]['album'] = album
                 metadata[artist]['tracks'][track['title']]['encoding'] = 'mp3'
