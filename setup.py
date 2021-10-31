@@ -3,11 +3,11 @@
 from setuptools import setup
 
 install_requires = [
-	'Pafy==0.3.66',
-	'fudge==1.0.3',
-	'requests==2.5.0',
-	'simplejson==3.6.5',
-	'slimit==0.8.1',
+  'Pafy==0.3.66',
+  'fudge==1.0.3',
+  'requests>=2.20.0',
+  'simplejson==3.6.5',
+  'slimit==0.8.1',
   'stagger',
 ]
 
