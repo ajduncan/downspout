@@ -2,8 +2,8 @@
 
 MEDIA_FOLDER = "./media"
 
-BANDCAMP_FRONT_URL = "http://{0}.bandcamp.com/"
-BANDCAMP_ALBUM_URL = "http://{0}.bandcamp.com/album/{1}"
+BANDCAMP_FRONT_URL = "https://{0}.bandcamp.com/"
+BANDCAMP_ALBUM_URL = "https://{0}.bandcamp.com/album/{1}"
 
 SOUNDCLOUD_CLIENT_ID = "YOUR_CLIENT_ID"
 SOUNDCLOUD_FRONT_URL = "https://soundcloud.com"
