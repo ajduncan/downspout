@@ -3,6 +3,8 @@
 from setuptools import setup
 
 install_requires = [
+  'bandcamp-downloader==0.0.10',
+  'beautifulsoup4==4.10.0',
   'Pafy==0.3.66',
   'fudge==1.0.3',
   'requests>=2.20.0',
@@ -17,7 +19,7 @@ dependency_links = [
 
 
 setup(name='downspout',
-      version='v0.0.5',
+      version='v0.0.6',
       description='Capture cloud based media for offline merriment.',
       license='MIT',
       author='Andy Duncan',
