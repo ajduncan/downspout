@@ -2,7 +2,7 @@ bandcamp-downloader==0.0.10
 beautifulsoup4==4.10.0
 Pafy==0.3.66
 fudge==1.0.3
-requests>=2.20.0
+requests>=2.32.4
 simplejson==3.6.5
 slimit==0.8.1
 ply==3.4
