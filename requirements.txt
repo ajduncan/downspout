@@ -7,3 +7,4 @@ simplejson==3.6.5
 slimit==0.8.1
 ply==3.4
 -e git://github.com/ajduncan/stagger.git@master#egg=stagger
+urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
